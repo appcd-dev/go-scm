@@ -7,7 +7,7 @@ package bitbucket
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -32,7 +32,7 @@ func TestUserFind(t *testing.T) {
 	}
 
 	want := new(scm.User)
-	raw, _ := ioutil.ReadFile("testdata/user.json.golden")
+	raw, _ := os.ReadFile("testdata/user.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -57,7 +57,7 @@ func TestUserLoginFind(t *testing.T) {
 	}
 
 	want := new(scm.User)
-	raw, _ := ioutil.ReadFile("testdata/user.json.golden")
+	raw, _ := os.ReadFile("testdata/user.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

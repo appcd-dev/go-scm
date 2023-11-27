@@ -7,7 +7,6 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -38,7 +37,7 @@ func TestUserFind(t *testing.T) {
 	}
 
 	want := new(scm.User)
-	raw, _ := ioutil.ReadFile("testdata/user.json.golden")
+	raw, _ := os.ReadFile("testdata/user.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -70,7 +69,7 @@ func TestUserLoginFind(t *testing.T) {
 	}
 
 	want := new(scm.User)
-	raw, _ := ioutil.ReadFile("testdata/user.json.golden")
+	raw, _ := os.ReadFile("testdata/user.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -130,7 +129,7 @@ func TestUserEmailList(t *testing.T) {
 	}
 
 	want := []*scm.Email{}
-	raw, _ := ioutil.ReadFile("testdata/emails.json.golden")
+	raw, _ := os.ReadFile("testdata/emails.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

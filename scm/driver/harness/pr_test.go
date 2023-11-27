@@ -7,8 +7,8 @@ package harness
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -41,7 +41,7 @@ func TestPRFind(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, err := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, err := os.ReadFile("testdata/pr.json.golden")
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,7 +80,7 @@ func TestPRCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, err := ioutil.ReadFile("testdata/pr_commits.json.golden")
+	raw, err := os.ReadFile("testdata/pr_commits.json.golden")
 	if err != nil {
 		t.Error(err)
 	}
@@ -126,7 +126,7 @@ func TestPullCreate(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

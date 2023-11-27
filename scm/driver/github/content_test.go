@@ -7,7 +7,7 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -39,7 +39,7 @@ func TestContentFind(t *testing.T) {
 	}
 
 	want := new(scm.Content)
-	raw, _ := ioutil.ReadFile("testdata/content.json.golden")
+	raw, _ := os.ReadFile("testdata/content.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -220,7 +220,7 @@ func TestContentList(t *testing.T) {
 	}
 
 	want := []*scm.ContentInfo{}
-	raw, _ := ioutil.ReadFile("testdata/content_list.json.golden")
+	raw, _ := os.ReadFile("testdata/content_list.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

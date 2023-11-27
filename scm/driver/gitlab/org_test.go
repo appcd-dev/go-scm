@@ -7,7 +7,7 @@ package gitlab
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -34,7 +34,7 @@ func TestOrganizationFind(t *testing.T) {
 	}
 
 	want := new(scm.Organization)
-	raw, _ := ioutil.ReadFile("testdata/group.json.golden")
+	raw, _ := os.ReadFile("testdata/group.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -67,7 +67,7 @@ func TestOrganizationList(t *testing.T) {
 	}
 
 	want := []*scm.Organization{}
-	raw, _ := ioutil.ReadFile("testdata/groups.json.golden")
+	raw, _ := os.ReadFile("testdata/groups.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

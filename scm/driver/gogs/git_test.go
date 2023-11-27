@@ -7,7 +7,7 @@ package gogs
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -35,7 +35,7 @@ func TestCommitFind(t *testing.T) {
 		t.Error(err)
 	}
 	want := new(scm.Commit)
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -69,7 +69,7 @@ func TestCommitFindBranch(t *testing.T) {
 		t.Error(err)
 	}
 	want := new(scm.Commit)
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -114,7 +114,7 @@ func TestBranchFind(t *testing.T) {
 	}
 
 	want := new(scm.Reference)
-	raw, _ := ioutil.ReadFile("testdata/branch.json.golden")
+	raw, _ := os.ReadFile("testdata/branch.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -139,7 +139,7 @@ func TestBranchList(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/branches.json.golden")
+	raw, _ := os.ReadFile("testdata/branches.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

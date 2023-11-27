@@ -7,7 +7,6 @@ package bitbucket
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -149,12 +148,12 @@ func TestWebhooks(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		before, err := ioutil.ReadFile(test.before)
+		before, err := os.ReadFile(test.before)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-		after, err := ioutil.ReadFile(test.after)
+		after, err := os.ReadFile(test.after)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -203,7 +202,7 @@ func TestWebhooks(t *testing.T) {
 }
 
 func TestWebhookInvalid(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/push.json")
+	f, _ := os.ReadFile("testdata/webhooks/push.json")
 	r, _ := http.NewRequest("GET", "/?secret=xxxxxinvalidxxxxxx", bytes.NewBuffer(f))
 	r.Header.Set("x-event-key", "repo:push")
 
@@ -215,7 +214,7 @@ func TestWebhookInvalid(t *testing.T) {
 }
 
 func TestWebhookValidated(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/push.json")
+	f, _ := os.ReadFile("testdata/webhooks/push.json")
 	r, _ := http.NewRequest("GET", "/?secret=71295b197fa25f4356d2fb9965df3f2379d903d7", bytes.NewBuffer(f))
 	r.Header.Set("x-event-key", "repo:push")
 

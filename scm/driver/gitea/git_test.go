@@ -7,7 +7,7 @@ package gitea
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -37,7 +37,7 @@ func TestGitFindCommit(t *testing.T) {
 	}
 
 	want := new(scm.Commit)
-	raw, _ := ioutil.ReadFile("testdata/commit.json.golden")
+	raw, _ := os.ReadFile("testdata/commit.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -60,7 +60,7 @@ func TestGitListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -111,7 +111,7 @@ func TestGitFindBranch(t *testing.T) {
 	}
 
 	want := new(scm.Reference)
-	raw, _ := ioutil.ReadFile("testdata/branch.json.golden")
+	raw, _ := os.ReadFile("testdata/branch.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -136,7 +136,7 @@ func TestGitListBranches(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/branches.json.golden")
+	raw, _ := os.ReadFile("testdata/branches.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -166,7 +166,7 @@ func TestGitFindTag(t *testing.T) {
 	}
 
 	want := &scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/tag.json.golden")
+	raw, _ := os.ReadFile("testdata/tag.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -192,7 +192,7 @@ func TestGitListTags(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/tags.json.golden")
+	raw, _ := os.ReadFile("testdata/tags.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

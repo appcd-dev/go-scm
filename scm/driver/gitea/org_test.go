@@ -7,7 +7,7 @@ package gitea
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -32,7 +32,7 @@ func TestOrgFind(t *testing.T) {
 	}
 
 	want := new(scm.Organization)
-	raw, _ := ioutil.ReadFile("testdata/organization.json.golden")
+	raw, _ := os.ReadFile("testdata/organization.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -61,7 +61,7 @@ func TestOrganizationFindMembership(t *testing.T) {
 	}
 
 	want := new(scm.Membership)
-	raw, _ := ioutil.ReadFile("testdata/membership.json.golden")
+	raw, _ := os.ReadFile("testdata/membership.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -86,7 +86,7 @@ func TestOrgList(t *testing.T) {
 	}
 
 	want := []*scm.Organization{}
-	raw, _ := ioutil.ReadFile("testdata/organizations.json.golden")
+	raw, _ := os.ReadFile("testdata/organizations.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

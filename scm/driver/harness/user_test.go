@@ -7,8 +7,8 @@ package harness
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -45,7 +45,7 @@ func TestUsersFind(t *testing.T) {
 	}
 
 	want := new(scm.User)
-	raw, _ := ioutil.ReadFile("testdata/user.json.golden")
+	raw, _ := os.ReadFile("testdata/user.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)

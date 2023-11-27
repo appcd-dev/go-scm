@@ -7,8 +7,8 @@ package harness
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -203,7 +203,7 @@ func TestContentList(t *testing.T) {
 	}
 
 	want := []*scm.ContentInfo{}
-	raw, _ := ioutil.ReadFile("testdata/content_list.json.golden")
+	raw, _ := os.ReadFile("testdata/content_list.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

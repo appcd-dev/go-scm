@@ -8,8 +8,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -44,7 +44,7 @@ func TestListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)
@@ -86,7 +86,7 @@ func TestFindCommit(t *testing.T) {
 	}
 
 	want := new(scm.Commit)
-	raw, _ := ioutil.ReadFile("testdata/commit.json.golden")
+	raw, _ := os.ReadFile("testdata/commit.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)
@@ -124,7 +124,7 @@ func TestFindBranch(t *testing.T) {
 	}
 
 	want := new(scm.Reference)
-	raw, _ := ioutil.ReadFile("testdata/branch.json.golden")
+	raw, _ := os.ReadFile("testdata/branch.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)
@@ -162,7 +162,7 @@ func TestListBranches(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/branches.json.golden")
+	raw, _ := os.ReadFile("testdata/branches.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)
@@ -239,7 +239,7 @@ func TestCompareChanges(t *testing.T) {
 	}
 
 	want := []*scm.Change{}
-	raw, _ := ioutil.ReadFile("testdata/gitdiff.json.golden")
+	raw, _ := os.ReadFile("testdata/gitdiff.json.golden")
 	wantErr := json.Unmarshal(raw, &want)
 	if wantErr != nil {
 		t.Error(wantErr)

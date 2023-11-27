@@ -7,7 +7,7 @@ package gitea
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -35,7 +35,7 @@ func TestRepoFind(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -60,7 +60,7 @@ func TestRepoFindPerm(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want.Perm); diff != "" {
@@ -85,7 +85,7 @@ func TestRepoList(t *testing.T) {
 	}
 
 	want := []*scm.Repository{}
-	raw, _ := ioutil.ReadFile("testdata/repos.json.golden")
+	raw, _ := os.ReadFile("testdata/repos.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -131,7 +131,7 @@ func TestHookFind(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -156,7 +156,7 @@ func TestHookList(t *testing.T) {
 	}
 
 	want := []*scm.Hook{}
-	raw, _ := ioutil.ReadFile("testdata/hooks.json.golden")
+	raw, _ := os.ReadFile("testdata/hooks.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -181,7 +181,7 @@ func TestHookCreate(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -206,7 +206,7 @@ func TestHookUpdate(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -301,7 +301,7 @@ func TestStatusList(t *testing.T) {
 	}
 
 	want := []*scm.Status{}
-	raw, _ := ioutil.ReadFile("testdata/statuses.json.golden")
+	raw, _ := os.ReadFile("testdata/statuses.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -332,7 +332,7 @@ func TestStatusCreate(t *testing.T) {
 	}
 
 	want := new(scm.Status)
-	raw, _ := ioutil.ReadFile("testdata/status.json.golden")
+	raw, _ := os.ReadFile("testdata/status.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

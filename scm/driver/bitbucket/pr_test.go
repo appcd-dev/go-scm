@@ -7,7 +7,7 @@ package bitbucket
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -32,7 +32,7 @@ func TestPullFind(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -59,7 +59,7 @@ func TestPullList(t *testing.T) {
 	}
 
 	want := []*scm.PullRequest{}
-	raw, _ := ioutil.ReadFile("testdata/prs.json.golden")
+	raw, _ := os.ReadFile("testdata/prs.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -86,7 +86,7 @@ func TestPullListChanges(t *testing.T) {
 	}
 
 	want := []*scm.Change{}
-	raw, _ := ioutil.ReadFile("testdata/pr_diffstat.json.golden")
+	raw, _ := os.ReadFile("testdata/pr_diffstat.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -141,7 +141,7 @@ func TestPullCreate(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -167,7 +167,7 @@ func TestPullListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -210,7 +210,7 @@ func TestPullRequestCreateComment(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/prcomment.json.golden")
+	raw, _ := os.ReadFile("testdata/prcomment.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

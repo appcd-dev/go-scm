@@ -8,8 +8,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -44,7 +44,7 @@ func TestRepositoryFind(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -82,7 +82,7 @@ func TestRepositoryList(t *testing.T) {
 	}
 
 	want := []*scm.Repository{}
-	raw, _ := ioutil.ReadFile("testdata/repos.json.golden")
+	raw, _ := os.ReadFile("testdata/repos.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if harnessPAT != "" && len(got) > 0 {
@@ -124,7 +124,7 @@ func TestRepositoryHookList(t *testing.T) {
 	}
 
 	want := []*scm.Hook{}
-	raw, _ := ioutil.ReadFile("testdata/hooks.json.golden")
+	raw, _ := os.ReadFile("testdata/hooks.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -158,7 +158,7 @@ func TestRepositoryFindHook(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -198,7 +198,7 @@ func TestRepositoryHookCreateDelete(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook_create.json.golden")
+	raw, _ := os.ReadFile("testdata/hook_create.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want, cmpopts.IgnoreFields(scm.Hook{}, "ID")); diff != "" {
