@@ -38,6 +38,8 @@ type repository struct {
 		Push  bool `json:"push"`
 		Pull  bool `json:"pull"`
 	} `json:"permissions"`
+	Description  string `json:"description"`
+	LanguagesURL string `json:"languages_url"`
 }
 
 type searchRepositoryList struct {
@@ -76,7 +78,7 @@ func (s *RepositoryService) Find(ctx context.Context, repo string) (*scm.Reposit
 	if err != nil {
 		return nil, res, err
 	}
-	convertedRepo := convertRepository(out)
+	convertedRepo := s.convertRepository(ctx, out, scm.AdditionalInfo{})
 	if convertedRepo == nil {
 		return nil, res, errors.New("GitHub returned an unexpected null repository")
 	}
@@ -99,7 +101,7 @@ func (s *RepositoryService) FindPerms(ctx context.Context, repo string) (*scm.Pe
 	if err != nil {
 		return nil, res, err
 	}
-	convertedRepo := convertRepository(out)
+	convertedRepo := s.convertRepository(ctx, out, scm.AdditionalInfo{})
 	if convertedRepo == nil {
 		return nil, res, errors.New("GitHub returned an unexpected null repository")
 	}
@@ -111,7 +113,7 @@ func (s *RepositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*
 	path := fmt.Sprintf("user/repos?%s", encodeListOptions(opts))
 	out := []*repository{}
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	return convertRepositoryList(out), res, err
+	return s.convertRepositoryList(ctx, out, opts.Meta), res, err
 }
 
 // ListV2 returns the user repository list based on the searchTerm passed.
@@ -119,7 +121,7 @@ func (s *RepositoryService) ListV2(ctx context.Context, opts scm.RepoListOptions
 	path := fmt.Sprintf("search/repositories?%s", encodeRepoListOptions(opts))
 	out := new(searchRepositoryList)
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	return convertRepositoryList(out.Repositories), res, err
+	return s.convertRepositoryList(ctx, out.Repositories, opts.Meta), res, err
 }
 
 // List returns the github app installation repository list.
@@ -127,7 +129,7 @@ func (s *RepositoryService) ListByInstallation(ctx context.Context, opts scm.Lis
 	path := fmt.Sprintf("installation/repositories?%s", encodeListOptions(opts))
 	out := new(repositoryList)
 	res, err := s.client.do(ctx, "GET", path, nil, out)
-	return convertRepositoryList(out.Repositories), res, err
+	return s.convertRepositoryList(ctx, out.Repositories, opts.Meta), res, err
 }
 
 // ListHooks returns a list or repository hooks.
@@ -224,10 +226,10 @@ func (s *RepositoryService) DeleteHook(ctx context.Context, repo, id string) (*s
 
 // helper function to convert from the gogs repository list to
 // the common repository structure.
-func convertRepositoryList(from []*repository) []*scm.Repository {
+func (s *RepositoryService) convertRepositoryList(ctx context.Context, from []*repository, additional scm.AdditionalInfo) []*scm.Repository {
 	to := []*scm.Repository{}
 	for _, v := range from {
-		if repo := convertRepository(v); repo != nil {
+		if repo := s.convertRepository(ctx, v, additional); repo != nil {
 			to = append(to, repo)
 		}
 	}
@@ -236,11 +238,11 @@ func convertRepositoryList(from []*repository) []*scm.Repository {
 
 // helper function to convert from the gogs repository structure
 // to the common repository structure.
-func convertRepository(from *repository) *scm.Repository {
+func (s *RepositoryService) convertRepository(ctx context.Context, from *repository, additional scm.AdditionalInfo) *scm.Repository {
 	if from == nil {
 		return nil
 	}
-	return &scm.Repository{
+	repo := &scm.Repository{
 		ID:        strconv.Itoa(from.ID),
 		Name:      from.Name,
 		Namespace: from.Owner.Login,
@@ -258,7 +260,13 @@ func convertRepository(from *repository) *scm.Repository {
 		CloneSSH:   from.SSHURL,
 		Created:    from.CreatedAt,
 		Updated:    from.UpdatedAt,
+
+		Description: from.Description,
 	}
+	if additional.Language {
+		_, _ = s.client.do(ctx, "GET", from.LanguagesURL, nil, &repo.Language)
+	}
+	return repo
 }
 
 func convertHookList(from []*hook) []*scm.Hook {

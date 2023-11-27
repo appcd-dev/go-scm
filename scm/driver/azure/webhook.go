@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -21,7 +20,7 @@ type webhookService struct {
 }
 
 func (s *webhookService) Parse(req *http.Request, fn scm.SecretFunc) (scm.Webhook, error) {
-	data, err := ioutil.ReadAll(
+	data, err := io.ReadAll(
 		io.LimitReader(req.Body, 10000000),
 	)
 	if err != nil {
@@ -123,7 +122,7 @@ func convertPushHook(src *pushHook) *scm.PushHook {
 	}
 	dst := &scm.PushHook{
 		Commit: scm.Commit{
-			Sha: src.Resource.RefUpdates[0].NewObjectID,
+			Sha:     src.Resource.RefUpdates[0].NewObjectID,
 			Message: "",
 			Author: scm.Signature{
 				Login:  src.Resource.PushedBy.ID,
@@ -281,21 +280,21 @@ func convertMergePullRequestHook(src *mergePullRequestHook) (returnVal *scm.Pull
 func convertIssueCommentHook(src *issueCommentPullRequestHook) *scm.IssueCommentHook {
 	dst := &scm.IssueCommentHook{
 		Repo: scm.Repository{
-			ID:         src.Resource.PullRequest.Repository.ID,
-			Namespace:  src.Resource.PullRequest.Repository.Project.Name,
-			Name:       src.Resource.PullRequest.Repository.Name,
-			Branch:     scm.TrimRef(src.Resource.PullRequest.SourceRefName),
-			Private:    false,
-			Clone:      src.Resource.PullRequest.Repository.WebURL,
-			CloneSSH:   src.Resource.PullRequest.Repository.SSHURL,
-			Link:       src.Resource.PullRequest.Repository.WebURL,
+			ID:        src.Resource.PullRequest.Repository.ID,
+			Namespace: src.Resource.PullRequest.Repository.Project.Name,
+			Name:      src.Resource.PullRequest.Repository.Name,
+			Branch:    scm.TrimRef(src.Resource.PullRequest.SourceRefName),
+			Private:   false,
+			Clone:     src.Resource.PullRequest.Repository.WebURL,
+			CloneSSH:  src.Resource.PullRequest.Repository.SSHURL,
+			Link:      src.Resource.PullRequest.Repository.WebURL,
 		},
 		Issue: scm.Issue{
-			Number:      src.Resource.PullRequest.PullRequestID,
-			Title:       src.Resource.PullRequest.Title,
-			Body:        src.Resource.PullRequest.Description,
-			Link:        src.Resource.PullRequest.URL,
-			Author:      scm.User{
+			Number: src.Resource.PullRequest.PullRequestID,
+			Title:  src.Resource.PullRequest.Title,
+			Body:   src.Resource.PullRequest.Description,
+			Link:   src.Resource.PullRequest.URL,
+			Author: scm.User{
 				Login:  src.Resource.PullRequest.CreatedBy.DisplayName,
 				Name:   src.Resource.PullRequest.CreatedBy.DisplayName,
 				Email:  src.Resource.PullRequest.CreatedBy.UniqueName,
@@ -323,20 +322,20 @@ func convertIssueCommentHook(src *issueCommentPullRequestHook) *scm.IssueComment
 			Created: src.Resource.PullRequest.CreationDate,
 		},
 		Comment: scm.Comment{
-			ID:      src.Resource.Comment.ID,
-			Body:    src.Resource.Comment.Content,
-			Author:  scm.User{
-				Email:   src.Resource.Comment.Author.UniqueName,
-				Login:   src.Resource.Comment.Author.ID,
-				Name:    src.Resource.Comment.Author.DisplayName,
+			ID:   src.Resource.Comment.ID,
+			Body: src.Resource.Comment.Content,
+			Author: scm.User{
+				Email: src.Resource.Comment.Author.UniqueName,
+				Login: src.Resource.Comment.Author.ID,
+				Name:  src.Resource.Comment.Author.DisplayName,
 			},
 			Created: src.Resource.Comment.PublishedDate,
 			Updated: src.Resource.Comment.LastUpdatedDate,
 		},
 		Sender: scm.User{
-			Email:   src.Resource.Comment.Author.UniqueName,
-			Login:   src.Resource.Comment.Author.ID,
-			Name:    src.Resource.Comment.Author.DisplayName,
+			Email: src.Resource.Comment.Author.UniqueName,
+			Login: src.Resource.Comment.Author.ID,
+			Name:  src.Resource.Comment.Author.DisplayName,
 		},
 	}
 	return dst
@@ -697,7 +696,7 @@ type issueCommentPullRequestHook struct {
 	PublisherID string `json:"publisherId"`
 	Resource    struct {
 		PullRequest struct {
-			CreatedBy  struct {
+			CreatedBy struct {
 				DisplayName string `json:"displayName"`
 				ID          string `json:"id"`
 				ImageURL    string `json:"imageUrl"`
@@ -708,12 +707,12 @@ type issueCommentPullRequestHook struct {
 			Description     string    `json:"description"`
 			LastMergeCommit struct {
 				CommitID string `json:"commitId"`
-				Author struct {
+				Author   struct {
 					Date  time.Time `json:"date"`
 					Email string    `json:"email"`
 					Name  string    `json:"name"`
 				} `json:"author"`
-				URL      string `json:"url"`
+				URL string `json:"url"`
 			} `json:"lastMergeCommit"`
 			LastMergeSourceCommit struct {
 				CommitID string `json:"commitId"`
@@ -727,9 +726,9 @@ type issueCommentPullRequestHook struct {
 			MergeStatus   string `json:"mergeStatus"`
 			PullRequestID int    `json:"pullRequestId"`
 			Repository    struct {
-				ID            string `json:"id"`
-				Name          string `json:"name"`
-				Project       struct {
+				ID      string `json:"id"`
+				Name    string `json:"name"`
+				Project struct {
 					ID    string `json:"id"`
 					Name  string `json:"name"`
 					State string `json:"state"`
@@ -757,15 +756,15 @@ type issueCommentPullRequestHook struct {
 			URL           string `json:"url"`
 		} `json:"pullRequest"`
 		Comment struct {
-			ID 					   int       `json:"id"`
-			ParentCommentId 	   int       `json:"parentCommentId"`
-			Content 			   string    `json:"content"`
+			ID                     int       `json:"id"`
+			ParentCommentId        int       `json:"parentCommentId"`
+			Content                string    `json:"content"`
 			PublishedDate          time.Time `json:"publishedDate"`
 			LastUpdatedDate        time.Time `json:"lastUpdatedDate"`
 			LastContentUpdatedDate time.Time `json:"lastContentUpdatedDate"`
-			CommentType 		   string    `json:"commentType"`
-			IsDeleted     		   bool      `json:"isDeleted"`
-			Author 				   struct {
+			CommentType            string    `json:"commentType"`
+			IsDeleted              bool      `json:"isDeleted"`
+			Author                 struct {
 				DisplayName string `json:"displayName"`
 				ID          string `json:"id"`
 				ImageURL    string `json:"imageUrl"`
