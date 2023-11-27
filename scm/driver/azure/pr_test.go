@@ -7,7 +7,7 @@ package azure
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -40,7 +40,7 @@ func TestPullCreate(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -66,7 +66,7 @@ func TestPullFind(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -92,7 +92,7 @@ func TestPullListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

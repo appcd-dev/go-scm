@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -35,7 +35,7 @@ func TestRepositoryFind(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -64,7 +64,7 @@ func TestRepositoryHookFind(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -93,7 +93,7 @@ func TestRepositoryPerms(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want.Perm); diff != "" {
@@ -125,7 +125,7 @@ func TestRepositoryList(t *testing.T) {
 	}
 
 	want := []*scm.Repository{}
-	raw, _ := ioutil.ReadFile("testdata/repos.json.golden")
+	raw, _ := os.ReadFile("testdata/repos.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -158,7 +158,7 @@ func TestRepositoryListHook(t *testing.T) {
 	}
 
 	want := []*scm.Hook{}
-	raw, _ := ioutil.ReadFile("testdata/hooks.json.golden")
+	raw, _ := os.ReadFile("testdata/hooks.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -200,7 +200,7 @@ func TestRepositoryCreateHook(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -241,7 +241,7 @@ func TestRepositoryUpdateHook(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/hook.json.golden")
+	raw, _ := os.ReadFile("testdata/hook.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

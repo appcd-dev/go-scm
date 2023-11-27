@@ -7,7 +7,7 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -33,7 +33,7 @@ func TestReviewFind(t *testing.T) {
 	}
 
 	want := new(scm.Review)
-	raw, _ := ioutil.ReadFile("testdata/pr_comment.json.golden")
+	raw, _ := os.ReadFile("testdata/pr_comment.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -66,7 +66,7 @@ func TestReviewList(t *testing.T) {
 	}
 
 	want := []*scm.Review{}
-	raw, _ := ioutil.ReadFile("testdata/pr_comments.json.golden")
+	raw, _ := os.ReadFile("testdata/pr_comments.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -104,7 +104,7 @@ func TestReviewCreate(t *testing.T) {
 	}
 
 	want := new(scm.Review)
-	raw, _ := ioutil.ReadFile("testdata/pr_comment.json.golden")
+	raw, _ := os.ReadFile("testdata/pr_comment.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

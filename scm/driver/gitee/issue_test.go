@@ -7,7 +7,7 @@ package gitee
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -49,7 +49,7 @@ func TestIssueFind(t *testing.T) {
 	}
 
 	want := new(scm.Issue)
-	raw, _ := ioutil.ReadFile("testdata/issue.json.golden")
+	raw, _ := os.ReadFile("testdata/issue.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -78,7 +78,7 @@ func TestIssueFindComment(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/issue_comment.json.golden")
+	raw, _ := os.ReadFile("testdata/issue_comment.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -111,7 +111,7 @@ func TestIssueList(t *testing.T) {
 	}
 
 	want := []*scm.Issue{}
-	raw, _ := ioutil.ReadFile("testdata/issues.json.golden")
+	raw, _ := os.ReadFile("testdata/issues.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -144,7 +144,7 @@ func TestIssueListComments(t *testing.T) {
 	}
 
 	want := []*scm.Comment{}
-	raw, _ := ioutil.ReadFile("testdata/issue_comments.json.golden")
+	raw, _ := os.ReadFile("testdata/issue_comments.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -179,7 +179,7 @@ func TestIssueCreate(t *testing.T) {
 	}
 
 	want := new(scm.Issue)
-	raw, _ := ioutil.ReadFile("testdata/issue.json.golden")
+	raw, _ := os.ReadFile("testdata/issue.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -212,7 +212,7 @@ func TestIssueCreateComment(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/issue_comment.json.golden")
+	raw, _ := os.ReadFile("testdata/issue_comment.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

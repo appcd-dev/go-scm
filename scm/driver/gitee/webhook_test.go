@@ -7,8 +7,8 @@ package gitee
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -170,12 +170,12 @@ func TestWebhooks(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		before, err := ioutil.ReadFile(test.before)
+		before, err := os.ReadFile(test.before)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-		after, err := ioutil.ReadFile(test.after)
+		after, err := os.ReadFile(test.after)
 		if err != nil {
 			t.Error(err)
 			continue
@@ -220,7 +220,7 @@ func TestWebhooks(t *testing.T) {
 }
 
 func TestWebhook_ErrUnknownEvent(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/push.json")
+	f, _ := os.ReadFile("testdata/webhooks/push.json")
 	r, _ := http.NewRequest("GET", "/", bytes.NewBuffer(f))
 
 	s := new(webhookService)
@@ -231,7 +231,7 @@ func TestWebhook_ErrUnknownEvent(t *testing.T) {
 }
 
 func TestWebhookInvalid(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/push.json")
+	f, _ := os.ReadFile("testdata/webhooks/push.json")
 	r, _ := http.NewRequest("GET", "/", bytes.NewBuffer(f))
 	r.Header.Set("X-Gitee-Event", "Push Hook")
 	r.Header.Set("X-Gitee-Token", "Xvh4YPVe6l31XpDRL9J2yeaEXabsckIoUUschpXiVck=")
@@ -246,7 +246,7 @@ func TestWebhookInvalid(t *testing.T) {
 }
 
 func TestWebhookValid(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/push.json")
+	f, _ := os.ReadFile("testdata/webhooks/push.json")
 	r, _ := http.NewRequest("GET", "/", bytes.NewBuffer(f))
 	r.Header.Set("X-Gitee-Event", "Push Hook")
 	r.Header.Set("X-Gitee-Token", "Xvh4YPVe6l31XpDRL9J2yeaEXabsckIoUUschpXiVck=")

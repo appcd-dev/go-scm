@@ -7,7 +7,7 @@ package gitlab
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -33,7 +33,7 @@ func TestPullFind(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/merge.json.golden")
+	raw, _ := os.ReadFile("testdata/merge.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -67,7 +67,7 @@ func TestPullList(t *testing.T) {
 	}
 
 	want := []*scm.PullRequest{}
-	raw, _ := ioutil.ReadFile("testdata/merges.json.golden")
+	raw, _ := os.ReadFile("testdata/merges.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -97,7 +97,7 @@ func TestPullListChanges(t *testing.T) {
 	}
 
 	want := []*scm.Change{}
-	raw, _ := ioutil.ReadFile("testdata/merge_diff.json.golden")
+	raw, _ := os.ReadFile("testdata/merge_diff.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -179,7 +179,7 @@ func TestPullCreate(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/merge.json.golden")
+	raw, _ := os.ReadFile("testdata/merge.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -209,7 +209,7 @@ func TestPullCommentFind(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/merge_note.json.golden")
+	raw, _ := os.ReadFile("testdata/merge_note.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -242,7 +242,7 @@ func TestPullListComments(t *testing.T) {
 	}
 
 	want := []*scm.Comment{}
-	raw, _ := ioutil.ReadFile("testdata/merge_notes.json.golden")
+	raw, _ := os.ReadFile("testdata/merge_notes.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -278,7 +278,7 @@ func TestPullCreateComment(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/merge_note.json.golden")
+	raw, _ := os.ReadFile("testdata/merge_note.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -327,7 +327,7 @@ func TestPullListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

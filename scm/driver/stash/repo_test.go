@@ -7,7 +7,7 @@ package stash
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -38,7 +38,7 @@ func TestRepositoryFind(t *testing.T) {
 	}
 
 	want := new(scm.Repository)
-	raw, _ := ioutil.ReadFile("testdata/repo.json.golden")
+	raw, _ := os.ReadFile("testdata/repo.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -310,7 +310,7 @@ func TestRepositoryList(t *testing.T) {
 	}
 
 	want := []*scm.Repository{}
-	raw, _ := ioutil.ReadFile("testdata/repos.json.golden")
+	raw, _ := os.ReadFile("testdata/repos.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -351,7 +351,7 @@ func TestRepositoryListV2(t *testing.T) {
 	}
 
 	want := []*scm.Repository{}
-	raw, _ := ioutil.ReadFile("testdata/repos_filter.json.golden")
+	raw, _ := os.ReadFile("testdata/repos_filter.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -407,7 +407,7 @@ func TestRepositoryHookFind(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/webhook.json.golden")
+	raw, _ := os.ReadFile("testdata/webhook.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -434,7 +434,7 @@ func TestRepositoryHookList(t *testing.T) {
 	}
 
 	want := []*scm.Hook{}
-	raw, _ := ioutil.ReadFile("testdata/webhooks.json.golden")
+	raw, _ := os.ReadFile("testdata/webhooks.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -471,7 +471,7 @@ func TestRepositoryHookCreate(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/webhook.json.golden")
+	raw, _ := os.ReadFile("testdata/webhook.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -508,7 +508,7 @@ func TestRepositoryHookUpdate(t *testing.T) {
 	}
 
 	want := new(scm.Hook)
-	raw, _ := ioutil.ReadFile("testdata/webhook.json.golden")
+	raw, _ := os.ReadFile("testdata/webhook.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

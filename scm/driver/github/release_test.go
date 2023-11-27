@@ -3,7 +3,7 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -30,7 +30,7 @@ func TestReleaseFind(t *testing.T) {
 	}
 
 	want := new(scm.Release)
-	raw, _ := ioutil.ReadFile("testdata/release.json.golden")
+	raw, _ := os.ReadFile("testdata/release.json.golden")
 	err = json.Unmarshal(raw, want)
 	if err != nil {
 		t.Error(err)
@@ -70,7 +70,7 @@ func TestReleaseList(t *testing.T) {
 	}
 
 	want := []*scm.Release{}
-	raw, _ := ioutil.ReadFile("testdata/releases.json.golden")
+	raw, _ := os.ReadFile("testdata/releases.json.golden")
 	err = json.Unmarshal(raw, &want)
 	if err != nil {
 		t.Error(err)
@@ -114,7 +114,7 @@ func TestReleaseCreate(t *testing.T) {
 	}
 
 	want := new(scm.Release)
-	raw, _ := ioutil.ReadFile("testdata/release.json.golden")
+	raw, _ := os.ReadFile("testdata/release.json.golden")
 	err = json.Unmarshal(raw, want)
 	if err != nil {
 		t.Error(err)
@@ -158,7 +158,7 @@ func TestReleaseUpdate(t *testing.T) {
 	}
 
 	want := new(scm.Release)
-	raw, _ := ioutil.ReadFile("testdata/release.json.golden")
+	raw, _ := os.ReadFile("testdata/release.json.golden")
 	err = json.Unmarshal(raw, want)
 	if err != nil {
 		t.Error(err)

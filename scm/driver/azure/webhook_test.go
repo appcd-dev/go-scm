@@ -7,8 +7,8 @@ package azure
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -68,12 +68,12 @@ func TestWebhooks(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		before, err := ioutil.ReadFile(test.before)
+		before, err := os.ReadFile(test.before)
 		if err != nil {
 			t.Error(err)
 			continue
 		}
-		after, err := ioutil.ReadFile(test.after)
+		after, err := os.ReadFile(test.after)
 		if err != nil {
 			t.Error(err)
 			continue

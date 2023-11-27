@@ -7,7 +7,7 @@ package gitea
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -35,7 +35,7 @@ func TestPullRequestFind(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -60,7 +60,7 @@ func TestPullRequestList(t *testing.T) {
 	}
 
 	want := []*scm.PullRequest{}
-	raw, _ := ioutil.ReadFile("testdata/prs.json.golden")
+	raw, _ := os.ReadFile("testdata/prs.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -92,7 +92,7 @@ func TestPullRequestCreate(t *testing.T) {
 	}
 
 	want := new(scm.PullRequest)
-	raw, _ := ioutil.ReadFile("testdata/pr.json.golden")
+	raw, _ := os.ReadFile("testdata/pr.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

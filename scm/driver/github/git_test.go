@@ -7,7 +7,7 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -34,7 +34,7 @@ func TestGitFindCommit(t *testing.T) {
 	}
 
 	want := new(scm.Commit)
-	raw, _ := ioutil.ReadFile("testdata/commit.json.golden")
+	raw, _ := os.ReadFile("testdata/commit.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -64,7 +64,7 @@ func TestGitFindBranch(t *testing.T) {
 	}
 
 	want := new(scm.Reference)
-	raw, _ := ioutil.ReadFile("testdata/branch.json.golden")
+	raw, _ := os.ReadFile("testdata/branch.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -94,7 +94,7 @@ func TestGitFindTag(t *testing.T) {
 	}
 
 	want := new(scm.Reference)
-	raw, _ := ioutil.ReadFile("testdata/tag.json.golden")
+	raw, _ := os.ReadFile("testdata/tag.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -160,7 +160,7 @@ func TestGitListCommits(t *testing.T) {
 	}
 
 	want := []*scm.Commit{}
-	raw, _ := ioutil.ReadFile("testdata/commits.json.golden")
+	raw, _ := os.ReadFile("testdata/commits.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -194,7 +194,7 @@ func TestGitListBranches(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/branches.json.golden")
+	raw, _ := os.ReadFile("testdata/branches.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -228,7 +228,7 @@ func TestGitListTags(t *testing.T) {
 	}
 
 	want := []*scm.Reference{}
-	raw, _ := ioutil.ReadFile("testdata/tags.json.golden")
+	raw, _ := os.ReadFile("testdata/tags.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -259,7 +259,7 @@ func TestGitListChanges(t *testing.T) {
 	}
 
 	want := []*scm.Change{}
-	raw, _ := ioutil.ReadFile("testdata/changes.json.golden")
+	raw, _ := os.ReadFile("testdata/changes.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -289,7 +289,7 @@ func TestGitCompareChanges(t *testing.T) {
 	}
 
 	want := []*scm.Change{}
-	raw, _ := ioutil.ReadFile("testdata/compare.json.golden")
+	raw, _ := os.ReadFile("testdata/compare.json.golden")
 	_ = json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

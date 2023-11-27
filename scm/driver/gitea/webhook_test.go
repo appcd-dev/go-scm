@@ -7,7 +7,6 @@ package gitea
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -121,12 +120,12 @@ func TestWebhooks(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.before, func(t *testing.T) {
 			t.Run(test.before, func(t *testing.T) {
-				before, err := ioutil.ReadFile(test.before)
+				before, err := os.ReadFile(test.before)
 				if err != nil {
 					t.Error(err)
 					return
 				}
-				after, err := ioutil.ReadFile(test.after)
+				after, err := os.ReadFile(test.after)
 				if err != nil {
 					t.Error(err)
 					return
@@ -177,7 +176,7 @@ func TestWebhooks(t *testing.T) {
 }
 
 func TestWebhook_ErrUnknownEvent(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/pull_request_edited.json")
+	f, _ := os.ReadFile("testdata/webhooks/pull_request_edited.json")
 	r, _ := http.NewRequest("GET", "/", bytes.NewBuffer(f))
 
 	s := new(webhookService)
@@ -188,7 +187,7 @@ func TestWebhook_ErrUnknownEvent(t *testing.T) {
 }
 
 func TestWebhookInvalid(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/pull_request_edited.json")
+	f, _ := os.ReadFile("testdata/webhooks/pull_request_edited.json")
 	r, _ := http.NewRequest("GET", "/?secert=xxxxxxinvalidxxxxx", bytes.NewBuffer(f))
 	r.Header.Set("X-Gitea-Event", "pull_request")
 	r.Header.Set("X-Gitea-Delivery", "ee8d97b4-1479-43f1-9cac-fbbd1b80da55")
@@ -202,7 +201,7 @@ func TestWebhookInvalid(t *testing.T) {
 }
 
 func TestWebhook_Validated(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/pull_request_edited.json")
+	f, _ := os.ReadFile("testdata/webhooks/pull_request_edited.json")
 	r, _ := http.NewRequest("GET", "/?secret=71295b197fa25f4356d2fb9965df3f2379d903d7", bytes.NewBuffer(f))
 	r.Header.Set("X-Gitea-Event", "pull_request")
 	r.Header.Set("X-Gitea-Delivery", "ee8d97b4-1479-43f1-9cac-fbbd1b80da55")
@@ -216,7 +215,7 @@ func TestWebhook_Validated(t *testing.T) {
 }
 
 func TestWebhook_MissingSignature(t *testing.T) {
-	f, _ := ioutil.ReadFile("testdata/webhooks/pull_request_edited.json")
+	f, _ := os.ReadFile("testdata/webhooks/pull_request_edited.json")
 	r, _ := http.NewRequest("GET", "/", bytes.NewBuffer(f))
 	r.Header.Set("X-Gitea-Event", "pull_request")
 	r.Header.Set("X-Gitea-Delivery", "ee8d97b4-1479-43f1-9cac-fbbd1b80da55")

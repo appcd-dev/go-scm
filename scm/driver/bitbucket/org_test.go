@@ -7,7 +7,7 @@ package bitbucket
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/drone/go-scm/scm"
@@ -32,7 +32,7 @@ func TestOrganizationFind(t *testing.T) {
 	}
 
 	want := new(scm.Organization)
-	raw, _ := ioutil.ReadFile("testdata/team.json.golden")
+	raw, _ := os.ReadFile("testdata/team.json.golden")
 	json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
@@ -59,7 +59,7 @@ func TestOrganizationList(t *testing.T) {
 	}
 
 	want := []*scm.Organization{}
-	raw, _ := ioutil.ReadFile("testdata/teams.json.golden")
+	raw, _ := os.ReadFile("testdata/teams.json.golden")
 	json.Unmarshal(raw, &want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
