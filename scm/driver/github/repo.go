@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/drone/go-scm/scm"
+	"golang.org/x/sync/errgroup"
 )
 
 type repository struct {
@@ -78,7 +79,7 @@ func (s *RepositoryService) Find(ctx context.Context, repo string) (*scm.Reposit
 	if err != nil {
 		return nil, res, err
 	}
-	convertedRepo := s.convertRepository(ctx, out, scm.AdditionalInfo{})
+	convertedRepo := convertRepository(out)
 	if convertedRepo == nil {
 		return nil, res, errors.New("GitHub returned an unexpected null repository")
 	}
@@ -101,7 +102,7 @@ func (s *RepositoryService) FindPerms(ctx context.Context, repo string) (*scm.Pe
 	if err != nil {
 		return nil, res, err
 	}
-	convertedRepo := s.convertRepository(ctx, out, scm.AdditionalInfo{})
+	convertedRepo := convertRepository(out)
 	if convertedRepo == nil {
 		return nil, res, errors.New("GitHub returned an unexpected null repository")
 	}
@@ -229,20 +230,32 @@ func (s *RepositoryService) DeleteHook(ctx context.Context, repo, id string) (*s
 func (s *RepositoryService) convertRepositoryList(ctx context.Context, from []*repository, additional scm.AdditionalInfo) []*scm.Repository {
 	to := []*scm.Repository{}
 	for _, v := range from {
-		if repo := s.convertRepository(ctx, v, additional); repo != nil {
+		if repo := convertRepository(v); repo != nil {
 			to = append(to, repo)
 		}
 	}
+	if !additional.Language {
+		return to
+	}
+	errGroup, ectx := errgroup.WithContext(ctx)
+	for i := range to {
+		repo := to[i]
+		errGroup.Go(func() error {
+			_, _ = s.client.do(ectx, "GET", repo.LanguagesURL, nil, &repo.Language)
+			return nil
+		})
+	}
+	_ = errGroup.Wait()
 	return to
 }
 
 // helper function to convert from the gogs repository structure
 // to the common repository structure.
-func (s *RepositoryService) convertRepository(ctx context.Context, from *repository, additional scm.AdditionalInfo) *scm.Repository {
+func convertRepository(from *repository) *scm.Repository {
 	if from == nil {
 		return nil
 	}
-	repo := &scm.Repository{
+	return &scm.Repository{
 		ID:        strconv.Itoa(from.ID),
 		Name:      from.Name,
 		Namespace: from.Owner.Login,
@@ -261,12 +274,9 @@ func (s *RepositoryService) convertRepository(ctx context.Context, from *reposit
 		Created:    from.CreatedAt,
 		Updated:    from.UpdatedAt,
 
-		Description: from.Description,
+		Description:  from.Description,
+		LanguagesURL: from.LanguagesURL,
 	}
-	if additional.Language {
-		_, _ = s.client.do(ctx, "GET", from.LanguagesURL, nil, &repo.Language)
-	}
-	return repo
 }
 
 func convertHookList(from []*hook) []*scm.Hook {

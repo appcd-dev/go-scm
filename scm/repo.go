@@ -28,8 +28,9 @@ type (
 		Created    time.Time
 		Updated    time.Time
 
-		Description string
-		Language    RepoLanguages
+		Description  string
+		LanguagesURL string
+		Language     RepoLanguages
 	}
 
 	// Perm represents a user's repository permissions.

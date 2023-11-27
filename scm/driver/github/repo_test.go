@@ -639,8 +639,7 @@ func Test_convertRepository(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client := NewDefault()
-			if got := client.Repositories.(*RepositoryService).convertRepository(context.Background(), tt.from, scm.AdditionalInfo{}); !reflect.DeepEqual(got, tt.want) {
+			if got := convertRepository(tt.from); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("convertRepository() = %v, want %v", got, tt.want)
 			}
 		})
