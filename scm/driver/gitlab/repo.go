@@ -14,6 +14,7 @@ import (
 
 	"github.com/drone/go-scm/scm"
 	"github.com/drone/go-scm/scm/driver/internal/null"
+	"golang.org/x/sync/errgroup"
 )
 
 type repository struct {
@@ -91,7 +92,19 @@ func (s *repositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*
 	path := fmt.Sprintf("api/v4/projects?%s", encodeMemberListOptions(opts))
 	out := []*repository{}
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	return convertRepositoryList(out), res, err
+	repos := convertRepositoryList(out)
+	if !opts.Meta.Language || err != nil {
+		return repos, res, err
+	}
+	errGroup, ctx := errgroup.WithContext(ctx)
+	for i := range repos {
+		repo := repos[i]
+		errGroup.Go(func() error {
+			_, _ = s.client.do(ctx, "GET", repo.LanguagesURL, nil, &repo.Language)
+			return nil
+		})
+	}
+	return repos, res, errGroup.Wait()
 }
 
 func (s *repositoryService) ListV2(ctx context.Context, opts scm.RepoListOptions) ([]*scm.Repository, *scm.Response, error) {
@@ -200,6 +213,7 @@ func convertRepository(from *repository) *scm.Repository {
 			Push:  canPush(from),
 			Admin: canAdmin(from),
 		},
+		LanguagesURL: fmt.Sprintf("api/v4/projects/%d/languages", from.ID),
 	}
 	if path := from.Namespace.FullPath; path != "" {
 		to.Namespace = path

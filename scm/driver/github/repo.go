@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/drone/go-scm/scm"
+	"golang.org/x/sync/errgroup"
 )
 
 type repository struct {
@@ -38,6 +39,8 @@ type repository struct {
 		Push  bool `json:"push"`
 		Pull  bool `json:"pull"`
 	} `json:"permissions"`
+	Description  string `json:"description"`
+	LanguagesURL string `json:"languages_url"`
 }
 
 type searchRepositoryList struct {
@@ -111,7 +114,7 @@ func (s *RepositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*
 	path := fmt.Sprintf("user/repos?%s", encodeListOptions(opts))
 	out := []*repository{}
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	return convertRepositoryList(out), res, err
+	return s.convertRepositoryList(ctx, out, opts.Meta), res, err
 }
 
 // ListV2 returns the user repository list based on the searchTerm passed.
@@ -119,7 +122,7 @@ func (s *RepositoryService) ListV2(ctx context.Context, opts scm.RepoListOptions
 	path := fmt.Sprintf("search/repositories?%s", encodeRepoListOptions(opts))
 	out := new(searchRepositoryList)
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	return convertRepositoryList(out.Repositories), res, err
+	return s.convertRepositoryList(ctx, out.Repositories, opts.Meta), res, err
 }
 
 // List returns the github app installation repository list.
@@ -127,7 +130,7 @@ func (s *RepositoryService) ListByInstallation(ctx context.Context, opts scm.Lis
 	path := fmt.Sprintf("installation/repositories?%s", encodeListOptions(opts))
 	out := new(repositoryList)
 	res, err := s.client.do(ctx, "GET", path, nil, out)
-	return convertRepositoryList(out.Repositories), res, err
+	return s.convertRepositoryList(ctx, out.Repositories, opts.Meta), res, err
 }
 
 // ListHooks returns a list or repository hooks.
@@ -224,13 +227,25 @@ func (s *RepositoryService) DeleteHook(ctx context.Context, repo, id string) (*s
 
 // helper function to convert from the gogs repository list to
 // the common repository structure.
-func convertRepositoryList(from []*repository) []*scm.Repository {
+func (s *RepositoryService) convertRepositoryList(ctx context.Context, from []*repository, additional scm.AdditionalInfo) []*scm.Repository {
 	to := []*scm.Repository{}
 	for _, v := range from {
 		if repo := convertRepository(v); repo != nil {
 			to = append(to, repo)
 		}
 	}
+	if !additional.Language {
+		return to
+	}
+	errGroup, ectx := errgroup.WithContext(ctx)
+	for i := range to {
+		repo := to[i]
+		errGroup.Go(func() error {
+			_, _ = s.client.do(ectx, "GET", repo.LanguagesURL, nil, &repo.Language)
+			return nil
+		})
+	}
+	_ = errGroup.Wait()
 	return to
 }
 
@@ -258,6 +273,9 @@ func convertRepository(from *repository) *scm.Repository {
 		CloneSSH:   from.SSHURL,
 		Created:    from.CreatedAt,
 		Updated:    from.UpdatedAt,
+
+		Description:  from.Description,
+		LanguagesURL: from.LanguagesURL,
 	}
 }
 

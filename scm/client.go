@@ -94,6 +94,12 @@ type (
 		URL  string
 		Page int
 		Size int
+
+		Meta AdditionalInfo
+	}
+
+	AdditionalInfo struct {
+		Language bool
 	}
 
 	// Client manages communication with a version control

@@ -10,6 +10,8 @@ import (
 )
 
 type (
+	// LanguageMap represents a map of languages.
+	RepoLanguages map[string]float32
 	// Repository represents a git repository.
 	Repository struct {
 		ID         string
@@ -25,6 +27,10 @@ type (
 		Link       string
 		Created    time.Time
 		Updated    time.Time
+
+		Description  string
+		LanguagesURL string
+		Language     RepoLanguages
 	}
 
 	// Perm represents a user's repository permissions.

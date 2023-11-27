@@ -33,9 +33,9 @@ func Repos(ctx context.Context, client *scm.Client) ([]*scm.Repository, error) {
 }
 
 // ReposV2 same as Repos but uses errgroup to fetch repos in parallel
-func ReposV2(ctx context.Context, client *scm.Client) ([]*scm.Repository, error) {
+func ReposV2(ctx context.Context, client *scm.Client, additional scm.AdditionalInfo) ([]*scm.Repository, error) {
 	list := []*scm.Repository{}
-	opts := scm.ListOptions{Size: 100}
+	opts := scm.ListOptions{Size: 100, Meta: additional}
 
 	result, meta, err := client.Repositories.List(ctx, opts)
 	if err != nil {
@@ -47,7 +47,7 @@ func ReposV2(ctx context.Context, client *scm.Client) ([]*scm.Repository, error)
 	}
 	errGroup, ectx := errgroup.WithContext(ctx)
 	for i := meta.Page.Next; i <= meta.Page.Last; i++ {
-		opts := scm.ListOptions{Size: 100, Page: i}
+		opts := scm.ListOptions{Size: 100, Page: i, Meta: additional}
 		errGroup.Go(func() error {
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
