@@ -11,7 +11,7 @@ import (
 
 type (
 	// LanguageMap represents a map of languages.
-	RepoLanguages map[string]int
+	RepoLanguages map[string]float32
 	// Repository represents a git repository.
 	Repository struct {
 		ID         string
