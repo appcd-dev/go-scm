@@ -26,7 +26,11 @@ func TestPRFind(t *testing.T) {
 		defer gock.Off()
 
 		gock.New(gockOrigin).
-			Get("/gateway/code/api/v1/repos/px7xd_BFRCi-pfWPYXVjvw/default/codeciintegration/thomas/+/pullreq/1").
+			Get("/gateway/code/api/v1/repos/thomas/pullreq/1").
+			MatchParam("accountIdentifier", "px7xd_BFRCi-pfWPYXVjvw").
+			MatchParam("orgIdentifier", "default").
+			MatchParam("projectIdentifier", "codeciintegration").
+			MatchParam("routingId", "px7xd_BFRCi-pfWPYXVjvw").
 			Reply(200).
 			Type("plain/text").
 			File("testdata/pr.json")
@@ -65,7 +69,11 @@ func TestPRCommits(t *testing.T) {
 		defer gock.Off()
 
 		gock.New(gockOrigin).
-			Get("/gateway/code/api/v1/repos/px7xd_BFRCi-pfWPYXVjvw/default/codeciintegration/thomas/+/pullreq/1/commits").
+			Get("/gateway/code/api/v1/repos/thomas/pullreq/1/commits").
+			MatchParam("accountIdentifier", "px7xd_BFRCi-pfWPYXVjvw").
+			MatchParam("orgIdentifier", "default").
+			MatchParam("projectIdentifier", "codeciintegration").
+			MatchParam("routingId", "px7xd_BFRCi-pfWPYXVjvw").
 			Reply(200).
 			Type("plain/text").
 			File("testdata/pr_commits.json")
@@ -102,7 +110,11 @@ func TestPRCommits(t *testing.T) {
 func TestPullCreate(t *testing.T) {
 	defer gock.Off()
 	gock.New(gockOrigin).
-		Post("/gateway/code/api/v1/repos/px7xd_BFRCi-pfWPYXVjvw/default/codeciintegration/thomas/+/pullreq").
+		Post("/gateway/code/api/v1/repos/thomas/pullreq").
+		MatchParam("accountIdentifier", "px7xd_BFRCi-pfWPYXVjvw").
+		MatchParam("orgIdentifier", "default").
+		MatchParam("projectIdentifier", "codeciintegration").
+		MatchParam("routingId", "px7xd_BFRCi-pfWPYXVjvw").
 		Reply(200).
 		Type("plain/text").
 		File("testdata/pr.json")
