@@ -13,9 +13,9 @@ import (
 
 // Repos returns the full repository list, traversing and
 // combining paginated responses if necessary.
-func Repos(ctx context.Context, client *scm.Client) ([]*scm.Repository, error) {
+func Repos(ctx context.Context, client *scm.Client, additional scm.AdditionalInfo) ([]*scm.Repository, error) {
 	list := []*scm.Repository{}
-	opts := scm.ListOptions{Size: 100}
+	opts := scm.ListOptions{Size: 100, Meta: additional}
 	for {
 		result, meta, err := client.Repositories.List(ctx, opts)
 		if err != nil {
