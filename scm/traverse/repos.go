@@ -46,7 +46,7 @@ func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*
 	}
 	errGroup, ectx := errgroup.WithContext(ctx)
 	for i := meta.Page.Next; i <= meta.Page.Last; i++ {
-		opts := scm.ListOptions{Size: 100, Page: i, Meta: opts.Meta}
+		opts := scm.ListOptions{Size: opts.Size, Page: i, Meta: opts.Meta}
 		errGroup.Go(func() error {
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
