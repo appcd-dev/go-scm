@@ -93,7 +93,7 @@ func (s *repositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*
 	path := fmt.Sprintf("api/v4/projects?%s", encodeMemberListOptions(opts))
 	out := []*repository{}
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
-	scmlogger.GetLogger().Log("Got %d repos from %s", len(out), path)
+	scmlogger.GetLogger(ctx).Debug("Got some repos", "count", len(out), "path", path)
 	repos := convertRepositoryList(out)
 	if !opts.Meta.Language || err != nil {
 		return repos, res, err

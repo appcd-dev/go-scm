@@ -1,16 +1,23 @@
 package scmlogger
 
-var logger Logger
+import (
+	"context"
+	"log/slog"
+)
 
-type Logger interface {
-	Log(msg string, args ...interface{})
+type LoggerFunc func(ctx context.Context) *slog.Logger
+
+var loggerFunc LoggerFunc
+
+func SetLoggerFunc(f LoggerFunc) {
+	loggerFunc = f
 }
 
-func GetLogger() Logger {
-	if logger == nil {
-		logger = &noopLogger{}
+func GetLogger(ctx context.Context) *slog.Logger {
+	if loggerFunc == nil {
+		return slog.Default()
 	}
-	return logger
+	return loggerFunc(ctx).With("namespace", "scm")
 }
 
 type noopLogger struct{}

@@ -53,7 +53,7 @@ func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*
 	for i := meta.Page.Next; i <= maxPage; i++ {
 		opts := scm.ListOptions{Size: opts.Size, Page: i, Meta: opts.Meta}
 		errGroup.Go(func() error {
-			scmlogger.GetLogger().Log("Checking the page %d", opts.Page)
+			scmlogger.GetLogger(ctx).Debug("Checking the page", "page", opts.Page)
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
 				return err
