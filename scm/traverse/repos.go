@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/drone/go-scm/scm"
+	"github.com/drone/go-scm/scm/scmlogger"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -44,10 +45,15 @@ func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*
 	if meta.Page.Next == 0 && meta.Page.NextURL == "" {
 		return list, nil
 	}
+	maxPage := meta.Page.Last
+	if opts.MaxPage != 0 && maxPage > opts.MaxPage {
+		maxPage = opts.MaxPage
+	}
 	errGroup, ectx := errgroup.WithContext(ctx)
-	for i := meta.Page.Next; i <= meta.Page.Last; i++ {
+	for i := meta.Page.Next; i <= maxPage; i++ {
 		opts := scm.ListOptions{Size: opts.Size, Page: i, Meta: opts.Meta}
 		errGroup.Go(func() error {
+			scmlogger.GetLogger().Log("Checking the page %d", opts.Page)
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
 				return err

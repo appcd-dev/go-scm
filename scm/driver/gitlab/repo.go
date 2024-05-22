@@ -14,6 +14,7 @@ import (
 
 	"github.com/drone/go-scm/scm"
 	"github.com/drone/go-scm/scm/driver/internal/null"
+	"github.com/drone/go-scm/scm/scmlogger"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -92,6 +93,7 @@ func (s *repositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*
 	path := fmt.Sprintf("api/v4/projects?%s", encodeMemberListOptions(opts))
 	out := []*repository{}
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
+	scmlogger.GetLogger().Log("Got %d repos from %s", len(out), path)
 	repos := convertRepositoryList(out)
 	if !opts.Meta.Language || err != nil {
 		return repos, res, err
