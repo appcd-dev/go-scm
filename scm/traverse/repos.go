@@ -35,25 +35,29 @@ func Repos(ctx context.Context, client *scm.Client, additional scm.AdditionalInf
 
 // ReposV2 same as Repos but uses errgroup to fetch repos in parallel
 func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*scm.Repository, error) {
+	logger := scmlogger.GetLogger(ctx).With("size", opts.Size)
+
 	list := []*scm.Repository{}
 
 	result, meta, err := client.Repositories.List(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug("Got the first page", "stats", meta)
 	list = addNonNil(list, result)
 	if meta.Page.Next == 0 && meta.Page.NextURL == "" {
+		logger.Debug("No more pages to fetch")
 		return list, nil
 	}
 	maxPage := meta.Page.Last
-	if opts.MaxPage != 0 && maxPage > opts.MaxPage {
+	if opts.MaxPage != 0 && (maxPage == 0 || maxPage > opts.MaxPage) {
 		maxPage = opts.MaxPage
 	}
 	errGroup, ectx := errgroup.WithContext(ctx)
 	for i := meta.Page.Next; i <= maxPage; i++ {
 		opts := scm.ListOptions{Size: opts.Size, Page: i, Meta: opts.Meta}
 		errGroup.Go(func() error {
-			scmlogger.GetLogger(ctx).Debug("Checking the page", "page", opts.Page)
+			logger.Debug("Checking the page", "page", opts.Page)
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
 				return err
