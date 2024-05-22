@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -182,7 +181,7 @@ func TestPRComment(t *testing.T) {
 	}
 
 	want := new(scm.Comment)
-	raw, _ := ioutil.ReadFile("testdata/comment.json.golden")
+	raw, _ := os.ReadFile("testdata/comment.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want,

@@ -55,7 +55,7 @@ func TestContentFind(t *testing.T) {
 	}
 
 	want = new(scm.Content)
-	raw, _ = ioutil.ReadFile("testdata/content.json.golden")
+	raw, _ = os.ReadFile("testdata/content.json.golden")
 	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {

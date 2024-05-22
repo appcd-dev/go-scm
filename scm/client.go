@@ -95,7 +95,8 @@ type (
 		Page int
 		Size int
 
-		Meta AdditionalInfo
+		Meta    AdditionalInfo
+		MaxPage int
 	}
 
 	AdditionalInfo struct {

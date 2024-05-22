@@ -8,14 +8,15 @@ import (
 	"context"
 
 	"github.com/drone/go-scm/scm"
+	"github.com/drone/go-scm/scm/scmlogger"
 	"golang.org/x/sync/errgroup"
 )
 
 // Repos returns the full repository list, traversing and
 // combining paginated responses if necessary.
-func Repos(ctx context.Context, client *scm.Client) ([]*scm.Repository, error) {
+func Repos(ctx context.Context, client *scm.Client, additional scm.AdditionalInfo) ([]*scm.Repository, error) {
 	list := []*scm.Repository{}
-	opts := scm.ListOptions{Size: 100}
+	opts := scm.ListOptions{Size: 100, Meta: additional}
 	for {
 		result, meta, err := client.Repositories.List(ctx, opts)
 		if err != nil {
@@ -33,22 +34,30 @@ func Repos(ctx context.Context, client *scm.Client) ([]*scm.Repository, error) {
 }
 
 // ReposV2 same as Repos but uses errgroup to fetch repos in parallel
-func ReposV2(ctx context.Context, client *scm.Client, additional scm.AdditionalInfo) ([]*scm.Repository, error) {
+func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*scm.Repository, error) {
+	logger := scmlogger.GetLogger(ctx).With("size", opts.Size)
+
 	list := []*scm.Repository{}
-	opts := scm.ListOptions{Size: 100, Meta: additional}
 
 	result, meta, err := client.Repositories.List(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debug("Got the first page", "stats", meta)
 	list = addNonNil(list, result)
 	if meta.Page.Next == 0 && meta.Page.NextURL == "" {
+		logger.Debug("No more pages to fetch")
 		return list, nil
 	}
+	maxPage := meta.Page.Last
+	if opts.MaxPage != 0 && (maxPage == 0 || maxPage > opts.MaxPage) {
+		maxPage = opts.MaxPage
+	}
 	errGroup, ectx := errgroup.WithContext(ctx)
-	for i := meta.Page.Next; i <= meta.Page.Last; i++ {
-		opts := scm.ListOptions{Size: 100, Page: i, Meta: additional}
+	for i := meta.Page.Next; i <= maxPage; i++ {
+		opts := scm.ListOptions{Size: opts.Size, Page: i, Meta: opts.Meta}
 		errGroup.Go(func() error {
+			logger.Debug("Checking the page", "page", opts.Page)
 			result, _, err := client.Repositories.List(ectx, opts)
 			if err != nil {
 				return err

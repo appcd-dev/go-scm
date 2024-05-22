@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/drone/go-scm/scm"
+	"github.com/drone/go-scm/scm/scmlogger"
 )
 
 // New returns a new GitLab API client.
@@ -75,6 +76,8 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 		}
 		req.Body = buf
 	}
+
+	scmlogger.GetLogger(ctx).Debug("making the API call", "url", req.Path, "method", req.Method, "host", c.BaseURL.Hostname())
 
 	// execute the http request
 	res, err := c.Client.Do(ctx, req)
