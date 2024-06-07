@@ -54,6 +54,7 @@ func encodeListOptions(opts scm.ListOptions) string {
 func encodeMemberListOptions(opts scm.ListOptions) string {
 	params := url.Values{}
 	params.Set("membership", "true")
+	params.Set("min_access_level", "30")
 	if opts.Page != 0 {
 		params.Set("page", strconv.Itoa(opts.Page))
 	}
@@ -66,6 +67,7 @@ func encodeMemberListOptions(opts scm.ListOptions) string {
 func encodeRepoListOptions(opts scm.RepoListOptions) string {
 	params := url.Values{}
 	params.Set("membership", "true")
+	params.Set("min_access_level", "30")
 	if opts.RepoSearchTerm != (scm.RepoSearchTerm{}) {
 		if opts.RepoSearchTerm.RepoName != "" {
 			params.Set("search", opts.RepoSearchTerm.RepoName)
