@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/drone/go-scm/scm"
 )
@@ -195,13 +196,17 @@ type repository struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	Project       struct {
-		ID    string `json:"id"`
-		Name  string `json:"name"`
-		State string `json:"state"`
-		URL   string `json:"url"`
+		ID             string    `json:"id"`
+		Name           string    `json:"name"`
+		State          string    `json:"state"`
+		URL            string    `json:"url"`
+		LastUpdateTime time.Time `json:"lastUpdateTime"`
+		Visibility     string    `json:"visibility"`
+		Description    string    `json:"description"`
 	} `json:"project"`
 	RemoteURL string `json:"remoteUrl"`
 	URL       string `json:"url"`
+	SSHUrl    string `json:"sshUrl"`
 }
 
 type subscriptions struct {
@@ -276,13 +281,21 @@ func convertRepositoryList(from *repositories, owner string) []*scm.Repository {
 // to the common repository structure.
 func convertRepository(from *repository, owner string) *scm.Repository {
 	namespace := []string{owner, from.Project.Name}
+	visibility := scm.VisibilityPublic
+	if from.Project.Visibility == "private" {
+		visibility = scm.VisibilityPrivate
+	}
 	return &scm.Repository{
-		ID:        from.ID,
-		Name:      from.Name,
-		Namespace: strings.Join(namespace, "/"),
-		Link:      from.URL,
-		Branch:    scm.TrimRef(from.DefaultBranch),
-		Clone:     from.RemoteURL,
+		ID:          from.ID,
+		Name:        from.Name,
+		Namespace:   strings.Join(namespace, "/"),
+		Link:        from.URL,
+		Branch:      scm.TrimRef(from.DefaultBranch),
+		Clone:       from.RemoteURL,
+		Updated:     from.Project.LastUpdateTime,
+		Visibility:  visibility,
+		CloneSSH:    from.SSHUrl,
+		Description: from.Project.Description,
 	}
 }
 
