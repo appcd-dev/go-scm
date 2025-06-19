@@ -84,6 +84,17 @@ func (s *pullService) Merge(ctx context.Context, repo string, number int) (*scm.
 	return res, err
 }
 
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	namespace, name := scm.Split(repo)
+	path := fmt.Sprintf("rest/api/1.0/projects/%s/repos/%s/pull-requests/%d", namespace, name, number)
+	in := new(prInput)
+	in.Title = input.Title
+	in.Description = input.Body
+	out := new(pr)
+	res, err := s.client.do(ctx, "PUT", path, in, out)
+	return convertPullRequest(out), res, err
+}
+
 func (s *pullService) Close(ctx context.Context, repo string, number int) (*scm.Response, error) {
 	namespace, name := scm.Split(repo)
 	path := fmt.Sprintf("rest/api/1.0/projects/%s/repos/%s/pull-requests/%d/decline", namespace, name, number)

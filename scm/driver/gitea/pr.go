@@ -73,8 +73,31 @@ func (s *pullService) Merge(ctx context.Context, repo string, index int) (*scm.R
 	return res, err
 }
 
-func (s *pullService) Close(context.Context, string, int) (*scm.Response, error) {
-	return nil, scm.ErrNotSupported
+func (s *pullService) Close(ctx context.Context, repo string, number int) (*scm.Response, error) {
+	path := fmt.Sprintf("api/v1/repos/%s/pulls/%d", repo, number)
+	data := map[string]string{"state": "closed"}
+	res, err := s.client.do(ctx, "PATCH", path, &data, nil)
+	return res, err
+}
+
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	path := fmt.Sprintf("api/v1/repos/%s/pulls/%d", repo, number)
+	in := &prInput{}
+	if input.Title != "" {
+		in.Title = input.Title
+	}
+	if input.Body != "" {
+		in.Body = input.Body
+	}
+	if input.Source != "" {
+		in.Head = input.Source
+	}
+	if input.Target != "" {
+		in.Base = input.Target
+	}
+	out := new(pr)
+	res, err := s.client.do(ctx, "PATCH", path, in, out)
+	return convertPullRequest(out), res, err
 }
 
 //

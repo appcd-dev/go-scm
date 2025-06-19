@@ -57,6 +57,18 @@ func (s *pullService) Close(ctx context.Context, repo string, number int) (*scm.
 	return nil, scm.ErrNotSupported
 }
 
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	path := fmt.Sprintf("2.0/repositories/%s/pullrequests/%d", repo, number)
+	in := new(prInput)
+	in.Title = input.Title
+	in.Description = input.Body
+	in.Source.Branch.Name = input.Source
+	in.Destination.Branch.Name = input.Target
+	out := new(pr)
+	res, err := s.client.do(ctx, "PUT", path, in, out)
+	return convertPullRequest(out), res, err
+}
+
 func (s *pullService) Create(ctx context.Context, repo string, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
 	path := fmt.Sprintf("2.0/repositories/%s/pullrequests", repo)
 	in := new(prInput)

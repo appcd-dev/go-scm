@@ -92,6 +92,23 @@ func (s *pullService) Merge(ctx context.Context, repo string, number int) (*scm.
 	return res, err
 }
 
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	in := url.Values{}
+	if input.Title != "" {
+		in.Set("title", input.Title)
+	}
+	if input.Body != "" {
+		in.Set("description", input.Body)
+	}
+	if input.Target != "" {
+		in.Set("target_branch", input.Target)
+	}
+	path := fmt.Sprintf("api/v4/projects/%s/merge_requests/%d?%s", encode(repo), number, in.Encode())
+	out := new(pr)
+	res, err := s.client.do(ctx, "PUT", path, nil, out)
+	return convertPullRequest(out), res, err
+}
+
 func (s *pullService) Close(ctx context.Context, repo string, number int) (*scm.Response, error) {
 	path := fmt.Sprintf("api/v4/projects/%s/merge_requests/%d?state_event=close", encode(repo), number)
 	res, err := s.client.do(ctx, "PUT", path, nil, nil)

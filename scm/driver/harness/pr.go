@@ -7,10 +7,11 @@ package harness
 import (
 	"context"
 	"fmt"
-	"github.com/drone/go-scm/scm/driver/internal/null"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/drone/go-scm/scm/driver/internal/null"
 
 	"github.com/drone/go-scm/scm"
 )
@@ -119,6 +120,28 @@ func (s *pullService) Merge(ctx context.Context, repo string, index int) (*scm.R
 
 func (s *pullService) Close(context.Context, string, int) (*scm.Response, error) {
 	return nil, scm.ErrNotSupported
+}
+
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	harnessURI := buildHarnessURI(s.client.account, s.client.organization, s.client.project, repo)
+	repoId, queryParams, err := getRepoAndQueryParams(harnessURI)
+	if err != nil {
+		return nil, nil, err
+	}
+	path := fmt.Sprintf("api/v1/repos/%s/pullreq/%d?%s", repoId, number, queryParams)
+	in := &prInput{}
+	if input.Title != "" {
+		in.Title = input.Title
+	}
+	if input.Body != "" {
+		in.Description = input.Body
+	}
+	if input.Target != "" {
+		in.TargetBranch = input.Target
+	}
+	out := new(pr)
+	res, err := s.client.do(ctx, "PUT", path, in, out)
+	return convertPullRequest(out), res, err
 }
 
 // native data structures

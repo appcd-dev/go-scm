@@ -106,6 +106,11 @@ type (
 		// Create creates a new pull request.
 		Create(context.Context, string, *PullRequestInput) (*PullRequest, *Response, error)
 
+		// Update updates an existing pull request.
+		// Note: Not all providers support updating pull requests.
+		// If the provider does not support this operation, it should return an error.
+		Update(context.Context, string, int, *PullRequestInput) (*PullRequest, *Response, error)
+
 		// CreateComment creates a new pull request comment.
 		CreateComment(context.Context, string, int, *CommentInput) (*Comment, *Response, error)
 

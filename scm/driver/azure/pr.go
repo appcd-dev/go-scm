@@ -47,8 +47,19 @@ func (s *pullService) Merge(ctx context.Context, repo string, number int) (*scm.
 	return nil, scm.ErrNotSupported
 }
 
+func (s *pullService) Update(ctx context.Context, repo string, number int, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
+	// Azure DevOps does not support updating pull requests directly.
+	// You can only update the title and description by creating a new pull request.
+	return nil, nil, scm.ErrNotSupported
+}
+
 func (s *pullService) Close(ctx context.Context, repo string, number int) (*scm.Response, error) {
-	return nil, scm.ErrNotSupported
+	// https://docs.microsoft.com/en-us/rest/api/azure/devops/git/pull-requests/update?view=azure-devops-rest-6.0
+	endpoint := fmt.Sprintf("%s/%s/_apis/git/repositories/%s/pullrequests/%d?api-version=6.0",
+		s.client.owner, s.client.project, repo, number)
+	data := map[string]string{"status": "abandoned"}
+	res, err := s.client.do(ctx, "PATCH", endpoint, &data, nil)
+	return res, err
 }
 
 func (s *pullService) Create(ctx context.Context, repo string, input *scm.PullRequestInput) (*scm.PullRequest, *scm.Response, error) {
