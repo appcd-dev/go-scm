@@ -49,6 +49,11 @@ func ReposV2(ctx context.Context, client *scm.Client, opts scm.ListOptions) ([]*
 		logger.Debug("No more pages to fetch")
 		return list, nil
 	}
+	// If a specific page is requested without a MaxPage, assume we only want
+	// that single page and do not traverse further.
+	if opts.Page > 0 && opts.MaxPage == 0 {
+		return list, nil
+	}
 	maxPage := meta.Page.Last
 	if opts.MaxPage != 0 && (maxPage == 0 || maxPage > opts.MaxPage) {
 		maxPage = opts.MaxPage
